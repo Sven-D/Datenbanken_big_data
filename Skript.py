@@ -12,6 +12,13 @@ import os
 from glob import glob
 from itertools import chain
 
+            
+#Setting global parameters
+token = "80lVAVV_krqomBP3xSx-9euqajzYtAnHc1GLBUH6L1TbuOfE0a3T-a1llh0IPvplhz01M-9xGDizEa7Gwr0uNA=="
+bucket = "benzin"
+org = "fhswf"
+root_path = input('Enter the absolute path to the root into terminal drag the folder into the terminal:')
+
 
 def db_loader (iterator, granularity_string):
     t1 = time()
@@ -32,21 +39,14 @@ def db_loader (iterator, granularity_string):
     t2 = time() 
     print(f' {granularity_string} : {(t2-t1):.4f}s')
 
-
-    
-
-       
-            
-#Setting global parameters
-token = "80lVAVV_krqomBP3xSx-9euqajzYtAnHc1GLBUH6L1TbuOfE0a3T-a1llh0IPvplhz01M-9xGDizEa7Gwr0uNA=="
-bucket = "benzin"
-org = "fhswf"
-file_directory = 'C:\\Users\\Sven\\Downloads\\Benzin'
-
 #Crawling a dictionary and returning all .csv as a generator 
-result = (chain.from_iterable(glob(os.path.join(x[0], '*.csv')) for x in os.walk(file_directory)))
-             
-db_loader(result,"For a test")
+Month =  (chain.from_iterable(glob(os.path.join(x[0], '*.csv')) for x in os.walk(root_path)))
+year =  (chain.from_iterable(glob(os.path.join(x[0], '*.csv')) for x in os.walk(root_path)))
+full_dataset = (chain.from_iterable(glob(os.path.join(x[0], '*.csv')) for x in os.walk(root_path)))
+
+db_loader(full_dataset,"The month 06 of 2015 took")
+db_loader(full_dataset,"The full year 2015 took") 
+db_loader(full_dataset,"The full dataset (up to 19.10.2022) took")
 
 
 
