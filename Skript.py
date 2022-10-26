@@ -16,19 +16,16 @@ from itertools import chain
 
 
 #Setting global parameters
-token = "c5MX6xsL7dMMJl6jK_FMXa7Hg9z94SHMX7rre4KOTeLhK0RH0sezD8RnkftPBoS2yHBvvvImZZNylnjr-MhskQ=="
+token = "Usw_bLjmA4qJSYMM_vhpvQrBIL1lzfHHCNmtPVfTjQRs2VqatsZ-DRnHOPeRf3FcRXREq0XMRBttt32Yk8mwKQ=="
 bucket = "benzin"
 org = "fhswf"
 root_path = Path(input('Enter the absolute path to the root into terminal drag the folder into the terminal:').replace("'",''))
-
 def db_loader_station (station_list):
     with InfluxDBClient(url="http://localhost:8086/", token=token, org=org, timeout=30000) as client:
         df = pd.read_csv(station_list, header=0)
-
-        point_settings = PointSettings(**{"type": "Station"})
-
-        write_api = client.write_api(write_options=SYNCHRONOUS, point_settings=point_settings)
-        write_api.write(bucket="benzin", record=df, data_frame_measurement_name="stations 19.10.2022")
+        write_api = client.write_api(write_options=SYNCHRONOUS)
+        write_api.write(bucket="benzin", record=df, data_frame_measurement_name="stations 19.10.2022",data_frame_tag_columns=['uuid'])
+        client.close()
 
 
 def db_loader (iterator_prices, granularity_string):
@@ -51,29 +48,54 @@ def db_loader (iterator_prices, granularity_string):
                 
                 df.index = pd.to_datetime(df.index, utc=True)
 
-                point_settings = PointSettings(**{"type": "Price"})
-                point_settings.add_default_tag("gas_prices", "ingest-data-frame")
-
-                write_client.write(bucket="benzin", record=df, data_frame_measurement_name="benzin_test_cases")
+                write_client.write(bucket="benzin", record=df, data_frame_measurement_name="gas_prices",data_frame_tag_columns=['station_uuid'])
+            write_client.close()
+        client.close()
     t2 = time()
-    print(f"{granularity_string} took : {timedelta(seconds=(t2-t1))}")
     
+    print(f"{granularity_string} took : {timedelta(seconds=(t2-t1))}")
+
+def get_size(start_path = 'C:\persistent_space'):
+    #Recursive, return file Size for folder in MB. 
+    return sum(file.stat().st_size for file in Path(start_path).rglob('*'))*0.000001
+
+def empty_bucket():
+    start = "2000-01-01T00:00:00Z"
+    stop = "2022-12-31T00:00:00Z"
+    with InfluxDBClient(url="http://localhost:8086/", token=token, timeout=30000) as client:
+        delete_api = client.delete_api()
+        delete_api.delete(start, stop, '_measurement="gas_prices"', bucket=bucket, org=org)
+        client.close()
+
+
 
 #Crawling a dictionary and returning all .csv as a generator
+path_month = os.path.join(root_path,"prices","2015","06")
+month_prices = chain.from_iterable(glob(os.path.join(x[0], '*.csv')) for x in os.walk(path_month))
 
-#Raw Size = 207MB, Influx-DB size = 9,74MB (Measured by size of Docker container)
-month_prices = (chain.from_iterable(glob(os.path.join(x[0], '*.csv')) for x in os.walk(os.path.join(root_path,"prices","2015","06"))))
-#Raw Size = , Influx-DB size = 98,478MB (Measured by size of Docker container)
-year_prices = (chain.from_iterable(glob(os.path.join(x[0], '*.csv')) for x in os.walk(os.path.join(root_path,"prices","2015"))))
+path_year = os.path.join(root_path,"prices","2015")
+year_prices = chain.from_iterable(glob(os.path.join(x[0], '*.csv')) for x in os.walk(path_year))
 
-full_dataset_prices = (chain.from_iterable(glob(os.path.join(x[0], '*.csv')) for x in os.walk(root_path,"prices")))
+path_full = os.path.join(root_path,"prices")
+full_dataset_prices = chain.from_iterable(glob(os.path.join(x[0], '*.csv')) for x in os.walk(path_full))
 
-#Raw Size = 4.403MB, INFLUX-DB size = 36.078MB (Measured by size of Docker container)
 latest_stations = os.path.join(root_path,"stations", "2022","10","2022-10-19-stations.csv")
 
 #db_loader_station(latest_stations)
+db_default_size = get_size()
 
-#db_loader(month_prices,"loading June 2015")
+#Getting starting db-size in from persistent space
+db_loader(month_prices,"loading June 2015")
+raw_month = get_size(path_month)
+size_loaded_month = get_size()-db_default_size
+print(f"raw size {raw_month:.3f}Mb | size in db:{size_loaded_month:.3f} Mb")
+#Now we empty the bucket (delete the measurement "gas_prices")
+
+
 #db_loader(year_prices,"Loading all of 2015")
-db_loader(full_dataset_prices,"The full dataset (up to 19.10.2022)")
+#raw_year = get_size(year_prices)
+
+#db_loader(year_prices,"Loading all of 2015")
+#db_loader(full_dataset_prices,"The full dataset (up to 19.10.2022)")
+#raw_full = get_size(full_dataset_prices)
 
