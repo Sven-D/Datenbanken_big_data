@@ -142,7 +142,6 @@ all_stations = chain.from_iterable(glob(os.path.join(x[0], '*.csv')) for x in os
 #Getting starting db-size in from persistent space
 db_default_size = get_size(persistent_space)
 
-""" 
 #Here we start the loading process of our differently sized data batches
 db_loader(month_prices,"loading June 2015")
 raw_month = get_size(path_prices_month)
@@ -158,8 +157,6 @@ print(f"raw size {raw_year:.3f}Mb | size in db:{size_loaded_year:.3f} Mb")
 empty_bucket()
 
 db_loader(full_dataset_prices,"The full dataset (up to 19.10.2022)")
-
-"""
 
 raw_full = get_size(path_prices_full)
 size_loaded_full = get_size()-db_default_size
