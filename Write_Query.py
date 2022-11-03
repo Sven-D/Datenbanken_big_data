@@ -1,5 +1,17 @@
+import pandas as pd
+from pathlib import Path
+from datetime import timedelta
+from time import timezone
 
-def db_loader_station (iterator_stations):
+#Establishing a connection to the servers, and writing into the DB
+from influxdb_client import InfluxDBClient
+from influxdb_client.client.write_api import SYNCHRONOUS, PointSettings,  WriteOptions, Point
+
+from time import time
+from datetime import timedelta, tzinfo
+
+
+def db_loader_station (iterator_stations, token, org, bucket):
         with InfluxDBClient(url="http://localhost:8086/", token=token, org=org, timeout=50000) as client:
             with client.write_api(write_options=SYNCHRONOUS) as write_api:
             
@@ -11,9 +23,9 @@ def db_loader_station (iterator_stations):
                         
                     df.index = pd.to_datetime(df.index, utc=True)
                     write_api.write(bucket=bucket, record=df, data_frame_measurement_name="stations",data_frame_tag_columns=['uuid'])
-                    client.close()                   
+            client.close()                   
 
-def db_loader (iterator_prices, granularity_string):
+def db_loader (iterator_prices, granularity_string, token, org, bucket):
     t1 = time()
     #Establish DB connection
     with InfluxDBClient(url="http://localhost:8086/", token=token, org=org, timeout=50000) as client:
@@ -28,18 +40,16 @@ def db_loader (iterator_prices, granularity_string):
                     
                 df.index = pd.to_datetime(df.index, utc=True)
                 write_api.write(bucket=bucket, record=df, data_frame_measurement_name="gas_prices",data_frame_tag_columns=['station_uuid'])
-                client.close() 
-                
-
-    t2 = time()
     
+    client.close() 
+    t2 = time()
     print(f"{granularity_string} took : {timedelta(seconds=(t2-t1))}")
 
 def get_size(start_path):
     #Recursive, return file Size for folder in MB. 
     return sum(file.stat().st_size for file in Path(start_path).rglob('*'))*0.000001
 
-def empty_bucket():
+def empty_bucket(token, org, bucket):
     #We use this function to clear our bucket after each write process (by simply erasing and reinitializing it).
     start = "2000-01-01T00:00:00Z"
     stop = "2022-12-31T00:00:00Z"

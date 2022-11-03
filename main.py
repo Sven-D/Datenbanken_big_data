@@ -47,6 +47,7 @@ raw_year = get_size(path_prices_year)
 size_loaded_year = get_size(persistent_space)-db_default_size
 print(f"raw size {raw_year:.3f}Mb | size in db:{size_loaded_year:.3f} Mb")
 empty_bucket(token, org, bucket)
+
 db_loader(full_dataset_prices,"The full dataset (up to 19.10.2022)", token, org, bucket)
 raw_full = get_size(path_prices_full)
 size_loaded_full = get_size(persistent_space)-db_default_size
