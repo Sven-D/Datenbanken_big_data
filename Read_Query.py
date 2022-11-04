@@ -14,7 +14,8 @@ def read_query (token=None, org=None, bucket=None, start=None, stop=None):
             from(bucket: "fuel")
                 |> range(start:{start}, stop:{stop})
                 |> filter(
-                fn: (r) => r._measurement =="gas_prices" and r._field =="dieselchange" and r._value == 1 
+                fn: (r) => r._measurement =="gas_prices" and r._field =="dieselchange" 
+                or r._field == "e5change" or r._field == "e10change" and r._value == 1
                 )
                 |> keep(columns: ["_value","station_uuid"])
                 |> count(column: "_value")
