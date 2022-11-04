@@ -35,3 +35,4 @@ ___
 
 ### Read Query
 A read query is calculated, which returns a JSON with a grouped Count of every price change referencing the different stations in Meschede (post code 59872). 
+Additionally the required Query time is printed as Well.
