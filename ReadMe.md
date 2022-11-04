@@ -1,16 +1,16 @@
 # What does the Script do? 
 
 The script performs different interactions with an InfluxDB, based on the Dataset: 
-[tankerkoenig-data - Repos (azure.com)](https://dev.azure.com/tankerkoenig/_git/tankerkoenig-data), with all the data up to 19.10.2022
+[tankerkoenig-data - Repos (azure.com)](https://dev.azure.com/tankerkoenig/_git/tankerkoenig-data), with all the data up to 19.10.2022 being used.
 
-Recommendation: Use a machine with at least 32GB of RAM, so there is plenty of memory available for the in-memory data.
+Recommendation: Utilize a machine with at least 32GB of RAM, so there is plenty of memory available for the in-memory data.
 
 ### Additional Server Configuration: 
-For a faster write to Disk, we set the snapshot duration to 10 seconds, as per recommendation: [Influx-Blog](https://www.influxdata.com/blog/tldr-influxdb-tech-tips-march-16-2017/)
+For a faster write to Disk, we set the snapshot duration to 10 seconds, as per recommendation for historical data: [Influx-Blog](https://www.influxdata.com/blog/tldr-influxdb-tech-tips-march-16-2017/)
 
 --storage-cache-snapshot-write-cold-duration=10s
 ___
-We also set the write timeout to 0, practically disabling it. 
+We also set the write timeout to 0, thus disabling it. 
 --http-write-timeout=0
 
 
