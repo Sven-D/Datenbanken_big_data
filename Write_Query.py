@@ -3,7 +3,6 @@ from pathlib import Path
 from datetime import timedelta
 from time import timezone
 
-#Establishing a connection to the servers, and writing into the DB
 from influxdb_client import InfluxDBClient
 from influxdb_client.client.write_api import SYNCHRONOUS, PointSettings,  WriteOptions, Point
 
@@ -15,10 +14,8 @@ def db_loader_station (iterator_stations, token, org, bucket):
         with InfluxDBClient(url="http://localhost:8086/", token=token, org=org, timeout=50000) as client:
             with client.write_api(write_options=SYNCHRONOUS) as write_api:
             
-                #Iterate
                 for x in iterator_stations:
                     
-                    print(x)
                     df = pd.read_csv(x, header=0)
                         
                     df.index = pd.to_datetime(df.index, utc=True)
@@ -27,18 +24,19 @@ def db_loader_station (iterator_stations, token, org, bucket):
 
 def db_loader (iterator_prices, granularity_string, token, org, bucket):
     t1 = time()
-    #Establish DB connection
+    #Establish DB connection and Push synchronous writes into the DB
     with InfluxDBClient(url="http://localhost:8086/", token=token, org=org, timeout=50000) as client:
         with client.write_api(write_options=SYNCHRONOUS) as write_api:
         
-            #Iterate
+#iterate through all CSV Files, load them into a Data frame and Feed them into the api
             for x in iterator_prices:
                 
-                print(x)
                 df = pd.read_csv(x, header=0,
                                     index_col=("date"))
                     
                 df.index = pd.to_datetime(df.index, utc=True)
+
+#We use the Uuid as a Tag, creating a unique series Key for every row
                 write_api.write(bucket=bucket, record=df, data_frame_measurement_name="gas_prices",data_frame_tag_columns=['station_uuid'])
     
     client.close() 
