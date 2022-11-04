@@ -36,7 +36,7 @@ def db_loader (iterator_prices, granularity_string, token, org, bucket):
                     
                 df.index = pd.to_datetime(df.index, utc=True)
 
-#We use the Uuid as a Tag, creating a unique series Key for every row
+#We use the Uuid as a Tag, creating unique series Keys
                 write_api.write(bucket=bucket, record=df, data_frame_measurement_name="gas_prices",data_frame_tag_columns=['station_uuid'])
     
     client.close() 
