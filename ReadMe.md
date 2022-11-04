@@ -24,11 +24,14 @@ The following performance metrics are calculated per batch:
  - Measure time delta 
 
 With the batch sizes: 
-- Single Month (June 2015)
-- Full Year (2015)
-- Full Dataset 
+1 Single Month (June 2015)
+2 Full Year (2015)
+3 Full Dataset 
+
+The Script drops the bucket and creates it anew, 
 ___
-Then it loads every station into the database as well.
+
+
 
 ### Read Query
 A read query is calculated, which returns a JSON with a grouped Count of every price change referencing the different stations in Meschede (post code 59872). 
