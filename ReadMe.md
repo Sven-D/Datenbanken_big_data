@@ -28,7 +28,7 @@ With the batch sizes:
 - Full Year (2015)
 - Full Dataset 
 
-After the first two batches, the script drops the bucket and recreates it. 
+After the first two batches, the script drops the bucket and recreates it so that the next iteration performs on a fresh database. 
 ___
 
 
