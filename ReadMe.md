@@ -11,6 +11,7 @@ For a faster write to Disk, we set the snapshot duration to 10 seconds, as per r
 --storage-cache-snapshot-write-cold-duration=10s
 
 We also set the write timeout to 0, thus disabling it. 
+
 --http-write-timeout=0
 
 ___
