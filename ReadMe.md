@@ -24,11 +24,11 @@ The following performance metrics are calculated per batch:
  - Measure time delta 
 
 With the batch sizes: 
-1 Single Month (June 2015)
-2 Full Year (2015)
-3 Full Dataset 
+- Single Month (June 2015)
+- Full Year (2015)
+- Full Dataset 
 
-The Script drops the bucket and creates it anew, 
+After the first two batches, the script drops the bucket and recreates it. 
 ___
 
 
