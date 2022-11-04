@@ -23,10 +23,10 @@ The following performance metrics are calculated per batch:
  - Measure the Raw data size and compare it to the mounted volume of the docker container (With a subtracted default DB-size)
  - Measure time delta 
 
- -  batch sizes: 
-	- Single Month (June 2015)
-	 - Full Year (2015)
-	 - Full Dataset 
+With the batch sizes: 
+- Single Month (June 2015)
+- Full Year (2015)
+- Full Dataset 
 ___
 Then it loads every station into the database as well.
 
