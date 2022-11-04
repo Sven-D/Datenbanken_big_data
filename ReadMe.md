@@ -1,6 +1,4 @@
-# Datenbanken für Big Data
-
-What does the Script do? 
+# What does the Script do? 
 
 The script performs different interactions with an InfluxDB, based on the Dataset: 
 [tankerkoenig-data - Repos (azure.com)](https://dev.azure.com/tankerkoenig/_git/tankerkoenig-data), with all the data up to 19.10.2022
